@@ -2,7 +2,6 @@ import { AsyncPipe, NgFor, NgIf } from '@angular/common';
 import { Component, Input, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FakeServiceService } from './fake.service';
-import { memo } from './memo';
 
 interface MenuItem {
   path: string;
@@ -14,12 +13,11 @@ interface MenuItem {
   standalone: true,
   imports: [RouterLink, RouterLinkActive, NgFor],
   template: `
-    <ng-container *ngFor="let menu of menus">
+    <ng-container *ngFor="let menu of menus; trackBy: trackMenu">
       <a
         class="border px-4 py-2 rounded-md"
         [routerLink]="menu.path"
-        routerLinkActive="isSelected"
-        >
+        routerLinkActive="isSelected">
         {{ menu.name }}
       </a>
     </ng-container>
@@ -37,6 +35,12 @@ interface MenuItem {
 })
 export class NavigationComponent {
   @Input() menus!: MenuItem[];
+
+  trackMenu(index: number, menu: MenuItem) {
+    return menu ? menu.path : undefined; // need a unique value 
+  }
+
+  // trackBy: trackMenu
 
 }
 
@@ -61,19 +65,10 @@ export class MainNavigationComponent {
 
   readonly info$ = this.fakeBackend.getInfoFromBackend();
 
-  /*
-  getMenu(prop: string) { // 'Client app' -> meaningless  
+  getMenu(prop: string) {
     return [
       { path: '/foo', name: `Foo ${prop}` },
       { path: '/bar', name: `Bar ${prop}` },
     ];
   }
-  */
-
-  getMenu = memo((prop: string) => [
-    { path: '/foo', name: `Foo ${prop}` },
-    { path: '/bar', name: `Bar ${prop}` },
-  ]
-  )
-  
 }
