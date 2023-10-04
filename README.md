@@ -35,10 +35,13 @@ If you open the [`RouterLinkActive` source code](https://github.com/angular/angu
 - App is slow and you can't refresh it. 
 - I didn't like the order of the routes so I changed them.  Although it doesn't really matter in this case, I always prefer to have empty routes at the bottom (with a wildcard route as the final route).  
 - Having getMenu function calls inside the template is a problem.   
-- Use a pipe ?   
-- The fake backend response (string) actually makes this harder to fix.  You have will have typing errors if try to just pass the string response to menus.  
-- I think using ngOnChanges is probably the solution Thomas had in mind.
-- However, I found some great articles and there is an easy fix.  Use a memo function and you can keep the function calls in the template.  See [this article](https://itnext.io/its-ok-to-use-function-calls-in-angular-templates-ffdd12b0789e) for the memo function and explanation.
+- Use a pipe ?  ngOnChanges ?
+- I initially leaned towards ngOnChanges as many challenges I have already used pipes.    
+- The fake backend response (string) actually makes this harder to fix with ngOnChanges.
+- There will be typing issues if you just pass a string to menus.  Once you fix that, then you call the getMenu function inside of ngOnChanges.  Then you have to worry about return types and issues in the template.  
+- I think it would be preferrable to have the @Input just be the object itself.  But that wouldn't be enough as you would need to pass the Input value to a function that adds the prop value inside the ngOnChanges function.   
+- Ultimately, I think ngOnChanges would require too much modification to the existing code to be a realistic solution.  
+- I found some great articles and there is an easy fix.  Use a memo function and you can keep the function calls in the template.  See [this article](https://itnext.io/its-ok-to-use-function-calls-in-angular-templates-ffdd12b0789e) for the memo function and explanation.
 
 ## Useful Resources
 
@@ -49,3 +52,4 @@ If you open the [`RouterLinkActive` source code](https://github.com/angular/angu
 - [Medium](https://medium.com/@andre.schouten_ff/whats-the-difference-between-markforcheck-and-detectchanges-in-angular-fff4e5f54d34) - difference between markForCheck and detectChanges
 - [Medium](https://medium.com/showpad-engineering/why-you-should-never-use-function-calls-in-angular-template-expressions-e1a50f9c0496#:~:text=In%20this%20article%2C%20we%20learned,calls%20in%20Angular%20template%20expressions.) - why you should never use function calls in angular template expressions
 - [Blog](https://itnext.io/its-ok-to-use-function-calls-in-angular-templates-ffdd12b0789e) - its ok to use function calls in angular templates
+- [Dev.to](https://dev.to/nickraphael/ngonchanges-best-practice-always-use-simplechanges-always-1feg) - ngOnChanges best practice always use simpleChanges
